@@ -101,7 +101,7 @@ class _MyMenuTabState extends State<MyMenuTab> {
                 ? EdgeInsets.only(bottom: 10, left: 0, right: 0, top: 0)
                 : EdgeInsets.all(0),
             child: Container(
-              height: isScrollingDown == false ? 90 : 75,
+              height: isScrollingDown == false ? 90 : 60,
               color: Colors.white,
               child: isScrollingDown == false
                   ? ListView.builder(
