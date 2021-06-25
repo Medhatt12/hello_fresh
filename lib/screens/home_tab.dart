@@ -95,7 +95,7 @@ class _HomeTabState extends State<HomeTab> {
         child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          itemCount: 3,
+          itemCount: 4,
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
               return _buildNamedHello(mediaQuery);

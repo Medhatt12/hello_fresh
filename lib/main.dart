@@ -1,14 +1,20 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hello_fresh/screens/home_tab.dart';
 import 'package:hello_fresh/screens/mymenu_tab.dart';
 import 'package:hello_fresh/screens/notifications_tab.dart';
 import 'package:hello_fresh/screens/settings_tab.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,7 +37,19 @@ class MyApp extends StatelessWidget {
           
         ),
       ),
-      home: MyHomePage(),
+      home: FutureBuilder(
+        future: _fbApp,
+        builder: (context,snapshot){
+          if(snapshot.hasError){
+            print('You have an error! ${snapshot.error.toString()}');
+            return Text('Something went wrong!');
+          }else if(snapshot.hasData){
+            return MyHomePage();
+          }else{
+            return Center(child: CircularProgressIndicator());
+          }
+        }
+      ),
     );
   }
 }
@@ -54,6 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   onTapped(int index) {
     setState(() {
+      DatabaseReference _testRef = FirebaseDatabase.instance.reference().child("test");
+    _testRef.set("Hello world ${Random().nextInt(100)}");
       currentTabIndex = index;
     });
   }
