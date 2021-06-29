@@ -1,14 +1,21 @@
-import 'package:hello_fresh/models/box_model.dart';
+import '../models/box_model.dart';
+import 'package:flutter/foundation.dart';
 
-class User{
-  String firstName;
-  String lastName;
+class User {
+  final String id;
+  final String firstName;
+  final String lastName;
   List<BoxOfMeals> pendingOrders;
   List<BoxOfMeals> previousOrders;
 
-  User(this.firstName,this.lastName,this.pendingOrders,this.previousOrders);
+  User(
+      {@required this.id,
+      @required this.firstName,
+      @required this.lastName,
+      this.pendingOrders,
+      this.previousOrders});
 
-  void addToPendingOrders(BoxOfMeals box){
-    pendingOrders.add(box);
-  }
+  // void addToPendingOrders(BoxOfMeals box){
+  //   pendingOrders.add(box);
+  // }
 }

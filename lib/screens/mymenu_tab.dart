@@ -1,11 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:hello_fresh/models/box_model.dart';
-import 'package:hello_fresh/models/ingredient_model.dart';
-import 'package:hello_fresh/models/meal_model.dart';
-import 'package:hello_fresh/models/user_model.dart';
+import 'package:hello_fresh/providers/all_boxes.dart';
+import 'package:hello_fresh/providers/boxes.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyMenuTab extends StatefulWidget {
   @override
@@ -13,26 +12,17 @@ class MyMenuTab extends StatefulWidget {
 }
 
 class _MyMenuTabState extends State<MyMenuTab> {
-  List<BoxOfMeals> pendingOrders;
-  List<BoxOfMeals> previousOrders;
-  User firstUser;
-  Ingredient chicken;
-  Ingredient rice;
-  Ingredient pesto;
-  List<Ingredient> mealOneIng;
-  Meal chickenPesto;
-  List<Meal> boxMeals;
-  BoxOfMeals weekOneBox;
-
   List<DateTime> daysShown = [];
   int _selectedindex = 0;
   int _selectedindex2 = 0;
   ScrollController _scrollViewController;
   bool isScrollingDown = false;
   bool once = false;
+  DateTime currentSelectedDate;
 
   @override
   void initState() {
+    poulateDaysList();
     super.initState();
     _scrollViewController = new ScrollController();
     _scrollViewController.addListener(() {
@@ -70,6 +60,7 @@ class _MyMenuTabState extends State<MyMenuTab> {
     final DateTime today = DateTime.now();
     int find = getDifference(today.weekday);
     DateTime firstDay = today.subtract(Duration(days: find + 7));
+    currentSelectedDate = firstDay;
     daysShown.add(firstDay);
     for (int i = 1; i < 10; i++) {
       DateTime temp = firstDay.add(Duration(days: i * 7));
@@ -78,23 +69,6 @@ class _MyMenuTabState extends State<MyMenuTab> {
   }
 
   Widget _buildSlidingMondays() {
-    chicken = new Ingredient('Chicken', 250.0);
-    rice = new Ingredient('rice', 150.0);
-    pesto = new Ingredient('pesto', 75.0);
-    mealOneIng = [chicken, rice, pesto];
-    chickenPesto = new Meal(
-        'Chicken Pesto Sauce',
-        'Chicken Pesto Sauce with garlic and white rice',
-        300,
-        false,
-        mealOneIng,
-        'assets/images/chickenpesto.jpeg');
-    boxMeals = [chickenPesto];
-    weekOneBox = new BoxOfMeals(boxMeals, DateTime.now(), false);
-    pendingOrders = [weekOneBox];
-    previousOrders = [];
-    firstUser = new User('Mohamed', 'Medhat', pendingOrders, previousOrders);
-
     return Container(
         child: Padding(
             padding: isScrollingDown == false
@@ -112,6 +86,7 @@ class _MyMenuTabState extends State<MyMenuTab> {
                           onTap: () {
                             setState(() {
                               _selectedindex = index;
+                              currentSelectedDate = daysShown[_selectedindex];
                             });
                           },
                           child: Container(
@@ -190,6 +165,13 @@ class _MyMenuTabState extends State<MyMenuTab> {
 
   @override
   Widget build(BuildContext context) {
+    final boxData = Provider.of<Boxes>(context);
+    final weekOneBox = boxData.box;
+    final allboxesData1 = Provider.of<AllBoxes>(context);
+   // print(allboxesData1.evaluateDates(DateTime.now().subtract(Duration(days: 1))).deliveryTime.day);
+    //final boxess = allboxesData.allBoxesData;
+    //boxDate = allboxesData.
+    
     if (once == false) {
       poulateDaysList();
       once = true;
@@ -197,161 +179,171 @@ class _MyMenuTabState extends State<MyMenuTab> {
     final mediaQuery = (MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.bottom -
         MediaQuery.of(context).padding.top);
-
+    //print(allboxesData1.evaluateDates(currentSelectedDate));
     return SafeArea(
         child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
             Widget>[
       _buildSlidingMondays(),
-      Container(
-          height: isScrollingDown == false
-              ? (mediaQuery - 200)
-              : (mediaQuery - 175),
-          child: ListView.builder(
-              controller: _scrollViewController,
-              scrollDirection: Axis.vertical,
-              itemCount: 8,
-              itemBuilder: (BuildContext context, int index2) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedindex2 = index2;
-                    });
-                  },
-                  child: Container(
-                    height: 300,
-                    margin: EdgeInsets.only(
-                        top: 0.0, bottom: 14, right: 12, left: 12),
-                    decoration: BoxDecoration(
-                        color: Colors.green[900],
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.green[900])),
-                    child: Stack(alignment: Alignment.topCenter, children: <
-                        Widget>[
-                      Positioned(
-                        top: 150.0,
+      allboxesData1.evaluateDates(currentSelectedDate)
+          ? Container(
+              height: isScrollingDown == false
+                  ? (mediaQuery - 200)
+                  : (mediaQuery - 175),
+              child: ListView.builder(
+                  controller: _scrollViewController,
+                  scrollDirection: Axis.vertical,
+                  itemCount: allboxesData1.getBox(currentSelectedDate).boxMeals.length,
+                  itemBuilder: (BuildContext context, int index2) {
+                    return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedindex2 = index2;
+                            // print('today is'+ DateTime.now().subtract(Duration(days: 1)).day.toString());
+                          });
+                        },
                         child: Container(
-                          height: 100.0,
-                          width: MediaQuery.of(context).size.width - 24,
+                          height: 350,
+                          margin: EdgeInsets.only(
+                              top: 0.0, bottom: 14, right: 12, left: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 8.0,
-                                      left: 8.0,
-                                      bottom: 8.0,
-                                      top: 7.0),
-                                  child: AutoSizeText(
-                                    weekOneBox.boxMeals[0].mealName,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 8.0,
-                                    left: 8.0,
-                                    bottom: 8.0,
-                                  ),
-                                  child: AutoSizeText(
-                                    weekOneBox.boxMeals[0].mealDescription,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 8.0,
-                                    left: 8.0,
-                                    bottom: 8.0,
-                                  ),
-                                  child: AutoSizeText(
-                                    '35 Minutes | Family',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            topLeft: Radius.circular(10),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              offset: Offset(0.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(10),
-                                topLeft: Radius.circular(10),
-                              ),
-                              child: Image(
+                              color: Colors.green[900],
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.green[900])),
+                          child:
+                              Stack(alignment: Alignment.topCenter, children: <
+                                  Widget>[
+                            Positioned(
+                              top: 150.0,
+                              child: Container(
                                 height: 150.0,
-                                width: MediaQuery.of(context).size.width - 20,
-                                image:
-                                    AssetImage(weekOneBox.boxMeals[0].imageURL),
-                                fit: BoxFit.cover,
+                                width: MediaQuery.of(context).size.width - 24,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            right: 8.0,
+                                            left: 8.0,
+                                            //bottom: 8.0,
+                                            top: 7.0),
+                                        child: AutoSizeText(
+                                          allboxesData1.getBox(currentSelectedDate).boxMeals[index2].mealName,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        fit: FlexFit.loose,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 8.0,
+                                            left: 8.0,
+                                            //bottom: 8.0,
+                                          ),
+                                          child: AutoSizeText(
+                                            allboxesData1.getBox(currentSelectedDate).boxMeals[index2]
+                                                .mealDescription,
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8.0,
+                                          left: 8.0,
+                                          //bottom: 8.0,
+                                        ),
+                                        child: AutoSizeText(
+                                          '${allboxesData1.getBox(currentSelectedDate).boxMeals[index2].cookingTime} Minutes | Family',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
                               ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(10),
+                                  topLeft: Radius.circular(10),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    offset: Offset(0.0, 2.0),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10),
+                                    ),
+                                    child: Image.network(
+                                      allboxesData1.getBox(currentSelectedDate).boxMeals[index2].imageURL,
+                                      height: 150.0,
+                                      width: MediaQuery.of(context).size.width -
+                                          20,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              //color: Colors.red,
+                              height: 50,
+                              margin: EdgeInsets.only(top: 300.0),
+                              decoration: BoxDecoration(
+                                  color: Colors.green[900],
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
+                                  )),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    AutoSizeText(
+                                      '1 Meal in your box',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 3,
+                                    ),
+                                    AutoSizeText(
+                                      '( 2 Portions )',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ]),
                             )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        //color: Colors.red,
-                        height: 50,
-                        margin: EdgeInsets.only(top:250.0),
-                        decoration: BoxDecoration(
-                          color: Colors.green[900],
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10),
-                          )),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              AutoSizeText(
-                                    '1 Meal in your box',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              SizedBox(height: 3,),
-                              AutoSizeText(
-                                    '( 2 Portions )',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                            ]
-                          ),
-                      )
-                    ]),
-                  ),
-                );
-              }))
+                          ]),
+                        ));
+                  }))
+          : Center(child: Text('No meals assigned for this date'))
     ]));
   }
 }

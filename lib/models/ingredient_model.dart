@@ -1,7 +1,9 @@
-class Ingredient{
-  String ingredientName;
-  double weightPerKGs;
+// import 'package:flutter/foundation.dart';
 
-  Ingredient(this.ingredientName,this.weightPerKGs);
-}
+// class Ingredient{
+//   final String ingredientName;
+//   final double weightPerKGs;
+
+//   Ingredient({@required this.ingredientName,@required this.weightPerKGs});
+// }
 

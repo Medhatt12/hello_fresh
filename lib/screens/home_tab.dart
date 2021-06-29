@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hello_fresh/models/box_model.dart';
-import 'package:hello_fresh/models/ingredient_model.dart';
-import 'package:hello_fresh/models/meal_model.dart';
-import 'package:hello_fresh/models/user_model.dart';
+import 'package:hello_fresh/providers/all_boxes.dart';
+import '../providers/boxes.dart';
 import 'package:intl/intl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:provider/provider.dart';
+import '../providers/dummy_data.dart';
 
 class HomeTab extends StatefulWidget {
   @override
@@ -13,34 +13,10 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  List<BoxOfMeals> pendingOrders;
-  List<BoxOfMeals> previousOrders;
-  User firstUser;
-  Ingredient chicken;
-  Ingredient rice;
-  Ingredient pesto;
-  List<Ingredient> mealOneIng;
-  Meal chickenPesto;
-  List<Meal> boxMeals;
-  BoxOfMeals weekOneBox;
 
   Widget _buildNamedHello(double mediaQuery) {
-    chicken = new Ingredient('Chicken', 250.0);
-    rice = new Ingredient('rice', 150.0);
-    pesto = new Ingredient('pesto', 75.0);
-    mealOneIng = [chicken, rice, pesto];
-    chickenPesto = new Meal(
-        'Chicken Pesto Sauce',
-        'Chicken Pesto Sauce with garlic and white rice',
-        300,
-        false,
-        mealOneIng,
-        'assets/images/chickenpesto.jpeg');
-    boxMeals = [chickenPesto];
-    weekOneBox = new BoxOfMeals(boxMeals, DateTime.now(), false);
-    pendingOrders = [weekOneBox];
-    previousOrders = [];
-    firstUser = new User('Mohamed', 'Medhat', pendingOrders, previousOrders);
+    final data = Provider.of<Data>(context);
+    final userData = data.getUser;
 
     return Container(
       child: Padding(
@@ -51,7 +27,7 @@ class _HomeTabState extends State<HomeTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Hello ' + firstUser.firstName + '!',
+                'Hello ' + userData.firstName + '!',
                 style: Theme.of(context).textTheme.title,
               ),
               Text(
@@ -90,12 +66,17 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _buildScallableContainers(double mediaQuery) {
+      final boxesData = Provider.of<Boxes>(context);
+      final box = boxesData.box;
+      final mealsData = boxesData.items;
+      final allboxesData1 = Provider.of<AllBoxes>(context);
+
     return Container(
         height: (mediaQuery - 100),
         child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          itemCount: 4,
+          itemCount: allboxesData1.allBoxesData.length+1,
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
               return _buildNamedHello(mediaQuery);
@@ -123,12 +104,12 @@ class _HomeTabState extends State<HomeTab> {
                             children: <Widget>[
                               SizedBox(height: 2),
                               Text(
-                                DateFormat('EEE.').format(DateTime.now()),
+                                DateFormat('EEE.').format(allboxesData1.allBoxesData[index].deliveryTime),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.green[900]),
                               ),
                               Text(
-                                DateFormat('dd').format(DateTime.now()),
+                                DateFormat('dd').format(allboxesData1.allBoxesData[index].deliveryTime),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 30,
@@ -136,7 +117,7 @@ class _HomeTabState extends State<HomeTab> {
                                     color: Colors.green[900]),
                               ),
                               Text(
-                                DateFormat('MMM').format(DateTime.now()),
+                                DateFormat('MMM').format(allboxesData1.allBoxesData[index].deliveryTime),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.green[900]),
                               ),
@@ -167,11 +148,12 @@ class _HomeTabState extends State<HomeTab> {
                             Text(
                                 'Change delivery untill ' +
                                     DateFormat('dd')
-                                        .format(weekOneBox.findLastEditDate()) +
+                                        .format(boxesData.findLastEditDate(allboxesData1.allBoxesData[index].deliveryTime)) +
                                     ' ' +
                                     DateFormat('MMMM')
-                                        .format(weekOneBox.findLastEditDate()),
-                                style: TextStyle(color: Colors.green[900])),
+                                        .format(boxesData.findLastEditDate(allboxesData1.allBoxesData[index].deliveryTime)),
+                                style: TextStyle(color: Colors.green[900])
+                                ),
                           ],
                         ),
                       ),
@@ -197,8 +179,8 @@ class _HomeTabState extends State<HomeTab> {
                   height: 180,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: 3,
-                      itemBuilder: (BuildContext context, int index) {
+                      itemCount: allboxesData1.allBoxesData[index].boxMeals.length,
+                      itemBuilder: (BuildContext context, int index2) {
                         return Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -214,11 +196,11 @@ class _HomeTabState extends State<HomeTab> {
                             child: Stack(children: <Widget>[
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
-                                child: Image(
+                                child: Image.network(
+                                  allboxesData1.allBoxesData[index].boxMeals[index2].imageURL,
                                   height: 280.0,
                                   width: 180.0,
-                                  image: AssetImage(
-                                      weekOneBox.boxMeals[0].imageURL),
+                                  
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -232,7 +214,7 @@ class _HomeTabState extends State<HomeTab> {
                                         height: 28,
                                         //color: Colors.red,
                                         child: AutoSizeText(
-                                          weekOneBox.boxMeals[0].mealName,
+                                          allboxesData1.allBoxesData[index].boxMeals[index2].mealName,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold),
@@ -253,6 +235,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    
     final mediaQuery = (MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.bottom -
         MediaQuery.of(context).padding.top);
@@ -260,7 +243,9 @@ class _HomeTabState extends State<HomeTab> {
     return SafeArea(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[_buildScallableContainers(mediaQuery)]),
+          children: <Widget>[
+            _buildScallableContainers(mediaQuery)
+            ]),
     );
   }
 }
