@@ -1,12 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:hello_fresh/providers/all_boxes.dart';
-import 'package:hello_fresh/providers/boxes.dart';
+import 'package:hello_fresh/screens/meal_details.dart';
+import '../models/box_model.dart';
+import '../providers/all_boxes.dart';
+import '../providers/boxes.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MyMenuTab extends StatefulWidget {
+  static const routeName = '/menu-tab';
   @override
   _MyMenuTabState createState() => _MyMenuTabState();
 }
@@ -95,7 +98,7 @@ class _MyMenuTabState extends State<MyMenuTab> {
                               border: Border.all(color: Colors.green[900]),
                               color: index == _selectedindex
                                   ? Colors.white
-                                  : Colors.red[100],
+                                  : Colors.grey[400],
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             height: 80,
@@ -129,7 +132,6 @@ class _MyMenuTabState extends State<MyMenuTab> {
                                       style:
                                           TextStyle(color: Colors.green[900]),
                                     ),
-                                    //SizedBox(height: 2),
                                   ]),
                             ),
                           ),
@@ -145,8 +147,8 @@ class _MyMenuTabState extends State<MyMenuTab> {
                             AutoSizeText(
                               'Available to edit until ' +
                                   DateFormat('EEEE, dd. MMMM')
-                                      .format(DateTime.now()
-                                          .subtract(Duration(days: 3)))
+                                      .format(currentSelectedDate
+                                          .subtract(Duration(days: 4)))
                                       .toString(),
                               style: Theme.of(context).textTheme.title,
                               textAlign: TextAlign.left,
@@ -165,13 +167,9 @@ class _MyMenuTabState extends State<MyMenuTab> {
 
   @override
   Widget build(BuildContext context) {
-    final boxData = Provider.of<Boxes>(context);
-    final weekOneBox = boxData.box;
     final allboxesData1 = Provider.of<AllBoxes>(context);
-   // print(allboxesData1.evaluateDates(DateTime.now().subtract(Duration(days: 1))).deliveryTime.day);
-    //final boxess = allboxesData.allBoxesData;
-    //boxDate = allboxesData.
-    
+    //final boxMeals = Provider.of<BoxOfMeals>(context);
+
     if (once == false) {
       poulateDaysList();
       once = true;
@@ -179,7 +177,6 @@ class _MyMenuTabState extends State<MyMenuTab> {
     final mediaQuery = (MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.bottom -
         MediaQuery.of(context).padding.top);
-    //print(allboxesData1.evaluateDates(currentSelectedDate));
     return SafeArea(
         child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
             Widget>[
@@ -192,14 +189,24 @@ class _MyMenuTabState extends State<MyMenuTab> {
               child: ListView.builder(
                   controller: _scrollViewController,
                   scrollDirection: Axis.vertical,
-                  itemCount: allboxesData1.getBox(currentSelectedDate).boxMeals.length,
+                  itemCount:
+                      allboxesData1.getBox(currentSelectedDate).boxMeals.length,
                   itemBuilder: (BuildContext context, int index2) {
                     return GestureDetector(
                         onTap: () {
                           setState(() {
                             _selectedindex2 = index2;
-                            // print('today is'+ DateTime.now().subtract(Duration(days: 1)).day.toString());
+                            //print(index2);
                           });
+                          Navigator.of(context).pushNamed(
+                              MealDetailScreen.routeName,
+                              arguments: [
+                                allboxesData1.getBox(currentSelectedDate).id,
+                                allboxesData1
+                                    .getBox(currentSelectedDate)
+                                    .boxMeals[index2]
+                                    .id
+                              ]);
                         },
                         child: Container(
                           height: 350,
@@ -233,7 +240,10 @@ class _MyMenuTabState extends State<MyMenuTab> {
                                             //bottom: 8.0,
                                             top: 7.0),
                                         child: AutoSizeText(
-                                          allboxesData1.getBox(currentSelectedDate).boxMeals[index2].mealName,
+                                          allboxesData1
+                                              .getBox(currentSelectedDate)
+                                              .boxMeals[index2]
+                                              .mealName,
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold,
@@ -249,7 +259,9 @@ class _MyMenuTabState extends State<MyMenuTab> {
                                             //bottom: 8.0,
                                           ),
                                           child: AutoSizeText(
-                                            allboxesData1.getBox(currentSelectedDate).boxMeals[index2]
+                                            allboxesData1
+                                                .getBox(currentSelectedDate)
+                                                .boxMeals[index2]
                                                 .mealDescription,
                                             style: TextStyle(
                                               color: Colors.black,
@@ -297,7 +309,10 @@ class _MyMenuTabState extends State<MyMenuTab> {
                                       topLeft: Radius.circular(10),
                                     ),
                                     child: Image.network(
-                                      allboxesData1.getBox(currentSelectedDate).boxMeals[index2].imageURL,
+                                      allboxesData1
+                                          .getBox(currentSelectedDate)
+                                          .boxMeals[index2]
+                                          .imageURL,
                                       height: 150.0,
                                       width: MediaQuery.of(context).size.width -
                                           20,
@@ -308,7 +323,6 @@ class _MyMenuTabState extends State<MyMenuTab> {
                               ),
                             ),
                             Container(
-                              //color: Colors.red,
                               height: 50,
                               margin: EdgeInsets.only(top: 300.0),
                               decoration: BoxDecoration(

@@ -16,4 +16,7 @@ class BoxOfMeals {
   //   DateTime lastTimeToEdit = deliveryTime.subtract(const Duration(days: 4));
   //   return lastTimeToEdit;
   // }
+ Meal mealGetter(String mealId){
+   return boxMeals.firstWhere((meal) => meal.id == mealId);
+ }
 }

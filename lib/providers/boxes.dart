@@ -1,5 +1,4 @@
-
-import 'package:flutter/material.dart';
+import '../models/meal_model.dart';
 
 import '../models/box_model.dart';
 
@@ -8,10 +7,10 @@ import './dummy_data.dart';
 class Boxes extends Data{
   
   BoxOfMeals _weekOneBox =  BoxOfMeals(
-      id: 'b1', boxMeals: Data().items, deliveryTime: DateTime.now().subtract(Duration(days: 1)));
+      id: 'b1', boxMeals: Data().items, deliveryTime: DateTime.now().subtract(Duration(days: 2)));
 
   BoxOfMeals _weekTwoBox =  BoxOfMeals(
-      id: 'b2', boxMeals: Data().items2, deliveryTime: DateTime.now().add(Duration(days: 6)));
+      id: 'b2', boxMeals: Data().items2, deliveryTime: DateTime.now().add(Duration(days: 5)));
 
   
 
@@ -20,6 +19,10 @@ class Boxes extends Data{
     return lastTimeToEdit;
   } 
 
+  List<Meal> getChosenMeals(BoxOfMeals weekMeals) {
+    return weekMeals.boxMeals.where((meal) => meal.isChoosen ==true).toList();    
+  }
+  
   BoxOfMeals get box{
     return _weekOneBox;
   }

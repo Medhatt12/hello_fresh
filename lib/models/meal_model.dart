@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import 'ingredient_model.dart';
 
-class Meal {
+class Meal with ChangeNotifier{
   final String id;
   final String mealName;
   final String mealDescription;
@@ -12,7 +11,7 @@ class Meal {
   final List<String> mealIngredients;
   final String imageURL;
   final int cookingTime;
-  bool isFavorite;
+  bool isChoosen;
 
   Meal(
       {@required this.id,
@@ -23,5 +22,13 @@ class Meal {
       @required this.mealIngredients,
       @required this.imageURL,
       @required this.cookingTime,
-      this.isFavorite});
+      this.isChoosen = false});
+
+  void toggleFavoriteStatue(){
+    isChoosen =!isChoosen;
+    notifyListeners();
+  }
+  bool get choosenVal{
+    return isChoosen;
+  }
 }

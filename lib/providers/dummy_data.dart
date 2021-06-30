@@ -3,7 +3,7 @@ import '../models/user_model.dart';
 import '../models/meal_model.dart';
 
 class Data with ChangeNotifier {
-  User _firtUser = new User(
+  User _firstUser = new User(
     firstName: 'Mohamed',
     lastName: 'Medhat',
     id: 'U1',
@@ -25,6 +25,7 @@ class Data with ChangeNotifier {
       imageURL:
           'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/4/12/0/FN_Grilled-Chicken-Spinach-Pesto_s4x3.jpg.rend.hgtvcom.616.462.suffix/1371597359023.jpeg',
       cookingTime: 50,
+      isChoosen: false,
     ),
     Meal(
       id: 'm2',
@@ -43,6 +44,27 @@ class Data with ChangeNotifier {
       imageURL:
           'https://i2.wp.com/www.lifeasastrawberry.com/wp-content/uploads/2015/04/IMG_3934s.jpg',
       cookingTime: 40,
+      isChoosen: false,
+    ),
+    Meal(
+      id: 'm6',
+      mealName: 'Classic Cheeseburger',
+      calories: 1750,
+      isVegan: false,
+      mealDescription:
+          'The All-time classic cheeseburger',
+      mealIngredients: [
+      '300g Cattle Hack',
+      '1 Tomato',
+      '1 Cucumber',
+      '1 Onion',
+      'Ketchup',
+      '2 Burger Buns'
+      ],
+      imageURL:
+          'https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg',
+      cookingTime: 40,
+      isChoosen: false,
     ),
   ];
 
@@ -64,12 +86,13 @@ class Data with ChangeNotifier {
       imageURL:
           'https://www.thespruceeats.com/thmb/LeyN-7W9T0KB2nl6pcuDZckHnjc=/4288x2848/filters:fill(auto,1)/wiener-schnitzel-recipe-1447089-Hero-5b587d6c46e0fb0071b0059d.jpg',
       cookingTime: 45,
+      isChoosen: false,
     ),
     Meal(
       id: 'm4',
       mealName: 'Spaghetti with Tomato Sauce',
       calories: 1000,
-      isVegan: false,
+      isVegan: true,
       mealDescription:
           'Spaghetti Recipe with tomato sauce, garlic and Parmesan. It is quick and easy but tastes like a fancy Italian restaurant dinner.',
       mealIngredients: [
@@ -83,6 +106,26 @@ class Data with ChangeNotifier {
       imageURL:
           'https://www.giallozafferano.com/images/228-22832/spaghetti-with-tomato-sauce_1200x800.jpg',
       cookingTime: 30,
+      isChoosen: false,
+    ),
+    Meal(
+      id: 'm5',
+      mealName: 'Toast Hawaii',
+      calories: 600,
+      isVegan: false,
+      mealDescription:
+          'An open sandwich consisting of a slice of toast with ham and cheese, and a maraschino cherry in the middle of a pineapple slice, broiled, so that the cheese starts to melt.',
+      mealIngredients: [
+      '1 Slice White Bread',
+      '1 Slice Ham',
+      '1 Slice Pineapple',
+      '1-2 Slices of Cheese',
+      'Butter'
+      ],
+      imageURL:
+          'https://cdn.pixabay.com/photo/2018/07/11/21/51/toast-3532016_1280.jpg',
+      cookingTime: 10,
+      isChoosen: false,
     )
   ];
 
@@ -94,6 +137,7 @@ class Data with ChangeNotifier {
   }
 
   User get getUser {
-    return _firtUser;
+    return _firstUser;
   }
+
 }

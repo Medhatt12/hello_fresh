@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NotificationsTab extends StatefulWidget {
-
+  static const routeName = '/notifications-tab';
+  
   @override
   _NotificationsTabState createState() => _NotificationsTabState();
 }

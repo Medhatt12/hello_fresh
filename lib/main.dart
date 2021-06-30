@@ -1,6 +1,8 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:hello_fresh/models/meal_model.dart';
+import '../screens/meal_details.dart';
+import '../screens/tabs_screen.dart';
 import '../providers/all_boxes.dart';
 import '../providers/boxes.dart';
 import '../providers/dummy_data.dart';
@@ -8,7 +10,6 @@ import '../screens/home_tab.dart';
 import '../screens/mymenu_tab.dart';
 import '../screens/notifications_tab.dart';
 import '../screens/settings_tab.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +24,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create:(ctx) => Data()),
+        ChangeNotifierProvider(create: (ctx) => Data()),
         ChangeNotifierProvider(create: (ctx)=> Boxes()),
-        ChangeNotifierProvider(create: (ctx)=>AllBoxes(),)
+        ChangeNotifierProvider(create: (ctx)=>AllBoxes()),
+        ChangeNotifierProvider(create: (ctx)=>Meal()),
       ],
           child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -47,86 +49,29 @@ class MyApp extends StatelessWidget {
             
           ),
         ),
-        home: FutureBuilder(
-          future: _fbApp,
-          builder: (context,snapshot){
-            if(snapshot.hasError){
-              print('You have an error! ${snapshot.error.toString()}');
-              return Text('Something went wrong!');
-            }else if(snapshot.hasData){
-              return MyHomePage();
-            }else{
-              return Center(child: CircularProgressIndicator());
-            }
-          }
-        ),
+        // home: FutureBuilder(
+        //   future: _fbApp,
+        //   builder: (context,snapshot){
+        //     if(snapshot.hasError){
+        //       print('You have an error! ${snapshot.error.toString()}');
+        //       return Text('Something went wrong!');
+        //     }else if(snapshot.hasData){
+        //       return HomeTab();
+        //     }else{
+        //       return Center(child: CircularProgressIndicator());
+        //     }
+        //   }
+        // ),
+        routes: {
+        '/': (ctx) => TabsScreen(),
+        HomeTab.routeName: (ctx) => HomeTab(),
+        MyMenuTab.routeName: (ctx) => MyMenuTab(),
+        NotificationsTab.routeName: (ctx) => NotificationsTab(),
+        SettingsTab.routeName:(ctx) =>SettingsTab(),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+      },
       ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int currentTabIndex = 0;
-
-  List<Widget> tabs = [
-    HomeTab(),
-    MyMenuTab(),
-    NotificationsTab(),
-    SettingsTab(),
-  ];
-
-  onTapped(int index) {
-    setState(() {
-      DatabaseReference _testRef = FirebaseDatabase.instance.reference().child("test");
-    _testRef.set("Hello world ${Random().nextInt(100)}");
-      currentTabIndex = index;
-    });
-  }
-
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: tabs[currentTabIndex],
-      backgroundColor: Colors.white,
-      bottomNavigationBar: SizedBox(
-        height: 100,
-        child: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home,),
-              label: 'Home',
-              backgroundColor: Colors.white,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt),
-              label: 'My Menu',
-              backgroundColor: Colors.white,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: 'Notifications',
-              backgroundColor: Colors.white,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-              backgroundColor: Colors.white,
-            ),
-          ],
-          currentIndex: currentTabIndex,
-          unselectedItemColor: Colors.grey,
-          unselectedLabelStyle: TextStyle(color: Colors.grey),
-          selectedItemColor: Colors.green[800],
-          onTap: onTapped,
-        ),
-      ),
-    );
-  }
-}
