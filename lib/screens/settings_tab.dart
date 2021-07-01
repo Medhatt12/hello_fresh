@@ -63,6 +63,22 @@ class _SettingsTabState extends State<SettingsTab> {
               )
             
          
-    ));
+    ),
+    floatingActionButton: 
+    OutlineButton(
+      child: Text(
+                            'Apply Filters',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[900]),
+                          ),
+      onPressed: (){
+        setState(() {
+          
+        });
+      }
+      )
+    );
   }
 }

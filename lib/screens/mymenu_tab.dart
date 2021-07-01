@@ -170,10 +170,10 @@ class _MyMenuTabState extends State<MyMenuTab> {
     final allboxesData1 = Provider.of<AllBoxes>(context);
     //final boxMeals = Provider.of<BoxOfMeals>(context);
 
-    if (once == false) {
-      poulateDaysList();
-      once = true;
-    }
+    // if (once == false) {
+    //   poulateDaysList();
+    //   once = true;
+    // }
     final mediaQuery = (MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.bottom -
         MediaQuery.of(context).padding.top);
@@ -213,9 +213,9 @@ class _MyMenuTabState extends State<MyMenuTab> {
                           margin: EdgeInsets.only(
                               top: 0.0, bottom: 14, right: 12, left: 12),
                           decoration: BoxDecoration(
-                              color: Colors.green[900],
+                              color: Colors.green,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.green[900])),
+                              border: Border.all(color: Colors.green)),
                           child:
                               Stack(alignment: Alignment.topCenter, children: <
                                   Widget>[
@@ -326,7 +326,7 @@ class _MyMenuTabState extends State<MyMenuTab> {
                               height: 50,
                               margin: EdgeInsets.only(top: 300.0),
                               decoration: BoxDecoration(
-                                  color: Colors.green[900],
+                                  color: Colors.green,
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),

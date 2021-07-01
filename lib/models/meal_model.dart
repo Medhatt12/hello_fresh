@@ -7,6 +7,9 @@ class Meal with ChangeNotifier{
   final String mealDescription;
   final int calories;
   final bool isVegan;
+  final bool isGlutenFree;
+  final bool isLactoseFree;
+  final bool isVegetarian;
   //final List<Ingredient> mealIngredients;
   final List<String> mealIngredients;
   final String imageURL;
@@ -19,12 +22,15 @@ class Meal with ChangeNotifier{
       @required this.mealDescription,
       @required this.calories,
       @required this.isVegan,
+      @required this.isGlutenFree,
+      @required this.isLactoseFree,
+      @required this.isVegetarian,
       @required this.mealIngredients,
       @required this.imageURL,
       @required this.cookingTime,
       this.isChoosen = false});
 
-  void toggleFavoriteStatue(){
+  void toggleChoosenStatus(){
     isChoosen =!isChoosen;
     notifyListeners();
   }

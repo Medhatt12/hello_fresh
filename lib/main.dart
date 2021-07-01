@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:hello_fresh/models/meal_model.dart';
+import '../models/meal_model.dart';
 import '../screens/meal_details.dart';
 import '../screens/tabs_screen.dart';
 import '../providers/all_boxes.dart';
@@ -12,6 +12,8 @@ import '../screens/notifications_tab.dart';
 import '../screens/settings_tab.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+
+import 'models/user_model.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx)=> Boxes()),
         ChangeNotifierProvider(create: (ctx)=>AllBoxes()),
         ChangeNotifierProvider(create: (ctx)=>Meal()),
+        ChangeNotifierProvider(create: (ctx) => User()),
       ],
           child: MaterialApp(
         debugShowCheckedModeBanner: false,

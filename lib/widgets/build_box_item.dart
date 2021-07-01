@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import '../providers/dummy_data.dart';
 import '../providers/all_boxes.dart';
 import '../providers/boxes.dart';
 import '../widgets/build_welcoming_widget.dart';
@@ -21,13 +22,15 @@ class BuildBoxItem extends StatelessWidget {
       final boxesData = Provider.of<Boxes>(context);
       //final functionGetter = boxesData.getChosenMeals(weekMeals);
       final allboxesData1 = Provider.of<AllBoxes>(context);
+      final boxData = Provider.of<Data>(context);
+      final user = boxData.userData;
 
     return Container(
         height: (mediaQuery - 100),
         child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          itemCount: allboxesData1.allBoxesData.length+1,
+          itemCount: user.pendingOrders.length!= 0? user.pendingOrders.length+1:1,
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
               return BuildWelcomingWidget(context: context, mediaQuery: mediaQuery);
@@ -55,12 +58,12 @@ class BuildBoxItem extends StatelessWidget {
                             children: <Widget>[
                               SizedBox(height: 2),
                               Text(
-                                DateFormat('EEE.').format(allboxesData1.allBoxesData[index].deliveryTime),
+                                DateFormat('EEE.').format(user.pendingOrders[index].deliveryTime),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.green[900]),
                               ),
                               Text(
-                                DateFormat('dd').format(allboxesData1.allBoxesData[index].deliveryTime),
+                                DateFormat('dd').format(user.pendingOrders[index].deliveryTime),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 30,
@@ -68,7 +71,7 @@ class BuildBoxItem extends StatelessWidget {
                                     color: Colors.green[900]),
                               ),
                               Text(
-                                DateFormat('MMM').format(allboxesData1.allBoxesData[index].deliveryTime),
+                                DateFormat('MMM').format(user.pendingOrders[index].deliveryTime),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.green[900]),
                               ),
@@ -99,10 +102,10 @@ class BuildBoxItem extends StatelessWidget {
                             Text(
                                 'Edit meals untill ' +
                                     DateFormat('dd')
-                                        .format(boxesData.findLastEditDate(allboxesData1.allBoxesData[index].deliveryTime)) +
+                                        .format(boxesData.findLastEditDate(user.pendingOrders[index].deliveryTime)) +
                                     ' ' +
                                     DateFormat('MMMM')
-                                        .format(boxesData.findLastEditDate(allboxesData1.allBoxesData[index].deliveryTime)),
+                                        .format(boxesData.findLastEditDate(user.pendingOrders[index].deliveryTime)),
                                 style: TextStyle(color: Colors.green[900])
                                 ),
                           ],
@@ -130,7 +133,7 @@ class BuildBoxItem extends StatelessWidget {
                   height: 180,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: boxesData.getChosenMeals(allboxesData1.allBoxesData[index]).length,
+                      itemCount: boxesData.getChosenMeals(user.pendingOrders[index]).length,
                       itemBuilder: (BuildContext context, int index2) {
                         return Container(
                             decoration: BoxDecoration(
@@ -148,7 +151,7 @@ class BuildBoxItem extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: Image.network(
-                                  boxesData.getChosenMeals(allboxesData1.allBoxesData[index])[index2].imageURL,
+                                  boxesData.getChosenMeals(user.pendingOrders[index])[index2].imageURL,
                                   height: 280.0,
                                   width: 180.0,
                                   
@@ -165,7 +168,7 @@ class BuildBoxItem extends StatelessWidget {
                                         height: 28,
                                         //color: Colors.red,
                                         child: AutoSizeText(
-                                          boxesData.getChosenMeals(allboxesData1.allBoxesData[index])[index2].mealName,
+                                          boxesData.getChosenMeals(user.pendingOrders[index])[index2].mealName,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold),

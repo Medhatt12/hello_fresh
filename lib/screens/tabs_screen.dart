@@ -66,7 +66,7 @@ class _TabsScreenState extends State<TabsScreen> {
           currentIndex: currentTabIndex,
           unselectedItemColor: Colors.grey,
           unselectedLabelStyle: TextStyle(color: Colors.grey),
-          selectedItemColor: Colors.green[800],
+          selectedItemColor: Colors.green,
           onTap: onTapped,
         ),
       ),
